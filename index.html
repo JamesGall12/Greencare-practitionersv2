@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Greencare Practitioner Breakdown</title>
+<title>Greencare Practitioner Breakdown - Live Data</title>
 <style>
 * {
 margin: 0;
@@ -86,47 +86,6 @@ padding: 30px;
 margin-bottom: 25px;
 box-shadow: 0 6px 25px rgba(0,0,0,0.08);
 }
-.metrics-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-gap: 25px;
-margin-bottom: 35px;
-}
-.metric-card {
-background: white;
-border-radius: 15px;
-padding: 30px;
-text-align: center;
-box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-transition: transform 0.3s ease;
-border-left: 6px solid transparent;
-}
-.metric-card:hover {
-transform: translateY(-8px);
-}
-.metric-card.green { border-left-color: #059669; }
-.metric-card.blue { border-left-color: #0284c7; }
-.metric-card.purple { border-left-color: #7c3aed; }
-.metric-card.orange { border-left-color: #ea580c; }
-.metric-card.red { border-left-color: #dc2626; }
-.metric-title {
-font-size: 1rem;
-color: #6b7280;
-margin-bottom: 10px;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.5px;
-}
-.metric-value {
-font-size: 3.2rem;
-font-weight: 700;
-margin-bottom: 8px;
-}
-.metric-subtitle {
-font-size: 1rem;
-color: #9ca3af;
-font-weight: 500;
-}
 .table {
 width: 100%;
 border-collapse: collapse;
@@ -176,12 +135,34 @@ color: #047857;
 line-height: 1.6;
 font-size: 1rem;
 }
+.loading {
+text-align: center;
+padding: 40px;
+color: #6b7280;
+}
+.error {
+background: #fef2f2;
+border: 1px solid #fca5a5;
+border-radius: 8px;
+padding: 15px;
+color: #dc2626;
+margin: 20px 0;
+}
+.refresh-btn {
+background: #059669;
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 8px;
+cursor: pointer;
+margin: 10px;
+}
+.refresh-btn:hover {
+background: #047857;
+}
 @media (max-width: 768px) {
 .title {
 font-size: 2.5rem;
-}
-.metrics-grid {
-grid-template-columns: 1fr;
 }
 }
 </style>
@@ -190,387 +171,284 @@ grid-template-columns: 1fr;
 <div class="container">
 <div class="header">
 <h1 class="title">Greencare Practitioner Breakdown</h1>
-<p class="subtitle">Comprehensive Performance Analysis | May 2025</p>
-<div class="performance-summary">
-📊 1,051 Total Appointments | 92.2% Completion Rate | 71.5% Sales Team Generated
+<p class="subtitle">Live Performance Analysis | <span id="lastUpdated">Loading...</span></p>
+<div class="performance-summary" id="summaryStats">
+📊 Loading data...
 </div>
+<button class="refresh-btn" onclick="loadAllData()">🔄 Refresh Data</button>
 </div>
-<div class="nav">
-<button class="tab-button active" onclick="showTab('practitioners', this)">Practitioner
-Analysis</button>
-<button class="tab-button" onclick="showTab('discharges', this)">Patient Retention &
-Discharges</button>
-</div>
-<div id="practitioners" class="tab-content active">
-<div class="card">
-<h3 style="margin-bottom: 25px; color: #064e3b;">Complete Practitioner Performance
-Analysis</h3>
-<div style="overflow-x: auto;">
-<table class="table" id="practitionerTable">
-<thead>
-<tr>
-<th onclick="sortTable(0)" style="cursor: pointer;">Practitioner ↕</th>
-<th onclick="sortTable(1)" style="cursor: pointer;">Completion Rate ↕</th>
-<th onclick="sortTable(2)" style="cursor: pointer;">Initial Consults (%) ↕</th>
-<th onclick="sortTable(3)" style="cursor: pointer;">Follow-ups (%) ↕</th>
-<th onclick="sortTable(4)" style="cursor: pointer;">Follow up: Seen patient before (%) ↕</th>
-<th onclick="sortTable(5)" style="cursor: pointer;">Follow up: Has not seen patient before
-(%) ↕</th>
-<th onclick="sortTable(6)" style="cursor: pointer;">Online Bookings (%) ↕</th>
-<th onclick="sortTable(7)" style="cursor: pointer;">Sales Team (%) ↕</th>
-</tr>
-</thead>
-<tbody>
-<tr class="performer-excellent">
-<td><strong>Dr Sandhya Bibin</strong></td>
-<td data-value="97.0" style="color: #059669; font-weight: bold;">97.0%</td>
-<td data-value="16.2">16.2%</td>
-<td data-value="82.9">82.9%</td>
-<td data-value="87.2" style="color: #059669; font-weight: bold;">87.2%</td>
-<td data-value="12.8">12.8%</td>
-<td data-value="29.6">29.6%</td>
-<td data-value="70.4">70.4%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Julius Ajayi</strong></td>
-<td data-value="96.8" style="color: #059669; font-weight: bold;">96.8%</td>
-<td data-value="29.2">29.2%</td>
-<td data-value="70.1">70.1%</td>
-<td data-value="82.4" style="color: #059669; font-weight: bold;">82.4%</td>
-<td data-value="17.6">17.6%</td>
-<td data-value="13.0">13.0%</td>
-<td data-value="87.0">87.0%</td>
-</tr>
-<tr class="performer-good">
-<td><strong>Dr Kushal Porwal</strong></td>
-<td data-value="84.1" style="color: #eab308; font-weight: bold;">84.1%</td>
-<td data-value="33.3">33.3%</td>
-<td data-value="66.7">66.7%</td>
-<td data-value="75.0" style="color: #eab308; font-weight: bold;">75.0%</td>
-<td data-value="25.0">25.0%</td>
-<td data-value="41.3">41.3%</td>
-<td data-value="58.7">58.7%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Aarons Gauntlet Rogers</strong></td>
-<td data-value="91.1" style="color: #059669; font-weight: bold;">91.1%</td>
-<td data-value="26.6">26.6%</td>
-<td data-value="72.2">72.2%</td>
-<td data-value="84.2" style="color: #059669; font-weight: bold;">84.2%</td>
-<td data-value="15.8">15.8%</td>
-<td data-value="27.8">27.8%</td>
-<td data-value="72.2">72.2%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Emma Lane</strong></td>
-<td data-value="98.4" style="color: #059669; font-weight: bold;">98.4%</td>
-<td data-value="10.9">10.9%</td>
-<td data-value="89.1">89.1%</td>
-<td data-value="94.7" style="color: #059669; font-weight: bold;">94.7%</td>
-<td data-value="5.3">5.3%</td>
-<td data-value="37.5">37.5%</td>
-<td data-value="62.5">62.5%</td>
-</tr>
 
-<tr class="performer-good">
-<td><strong>Dr Luke</strong></td>
-<td data-value="86.5" style="color: #eab308; font-weight: bold;">86.5%</td>
-<td data-value="23.1">23.1%</td>
-<td data-value="71.2">71.2%</td>
-<td data-value="78.4" style="color: #eab308; font-weight: bold;">78.4%</td>
-<td data-value="21.6">21.6%</td>
-<td data-value="15.4">15.4%</td>
-<td data-value="78.8">78.8%</td>
-</tr>
-<tr class="performer-good">
-<td><strong>Dr Dia Chouhan</strong></td>
-<td data-value="87.8" style="color: #eab308; font-weight: bold;">87.8%</td>
-<td data-value="22.4">22.4%</td>
-<td data-value="73.5">73.5%</td>
-<td data-value="77.8" style="color: #eab308; font-weight: bold;">77.8%</td>
-<td data-value="22.2">22.2%</td>
-<td data-value="24.5">24.5%</td>
-<td data-value="71.4">71.4%</td>
-</tr>
-<tr class="performer-good">
-<td><strong>Dr Ronnie Varkey</strong></td>
-<td data-value="86.7" style="color: #eab308; font-weight: bold;">86.7%</td>
-<td data-value="26.7">26.7%</td>
-<td data-value="66.7">66.7%</td>
-<td data-value="80.0" style="color: #eab308; font-weight: bold;">80.0%</td>
-<td data-value="20.0">20.0%</td>
-<td data-value="23.3">23.3%</td>
-<td data-value="70.0">70.0%</td>
-</tr>
-<tr class="performer-average">
-<td><strong>Dr Julia</strong></td>
-<td data-value="50.0" style="color: #dc2626; font-weight: bold;">50.0%</td>
-<td data-value="50.0">50.0%</td>
-<td data-value="50.0">50.0%</td>
-<td data-value="50.0" style="color: #dc2626;">50.0%</td>
-<td data-value="50.0">50.0%</td>
-<td data-value="25.0">25.0%</td>
-<td data-value="75.0">75.0%</td>
-</tr>
-<tr class="performer-average">
-<td><strong>Dr Jeremy</strong></td>
-<td data-value="50.0" style="color: #dc2626; font-weight: bold;">50.0%</td>
-<td data-value="25.0">25.0%</td>
-<td data-value="75.0">75.0%</td>
-<td data-value="66.7" style="color: #dc2626;">66.7%</td>
-<td data-value="33.3">33.3%</td>
-<td data-value="0.0">0.0%</td>
-<td data-value="100.0">100.0%</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="insight-card">
-<div class="insight-title">📊 Patient Continuity & Practitioner Loyalty Analysis</div>
-<div class="insight-text">
-<strong>Highest Patient Loyalty (Follow up: Seen patient before):</strong><br>
-• <strong>Dr Emma Lane:</strong> 94.7% of follow-ups are returning patients<br>
-• <strong>Dr Sandhya Bibin:</strong> 87.2% patient loyalty<br>
-• <strong>Dr Aarons Gauntlet Rogers:</strong> 84.2% patient loyalty<br><br>
-<strong>Cross-Referral Analysis (Follow up: Has not seen patient before):</strong><br>
-• <strong>Dr Kushal Porwal:</strong> 25.0% of follow-ups are cross-referrals<br>
-• <strong>Dr Dia Chouhan:</strong> 22.2% cross-referral rate<br>
-• <strong>Dr Luke:</strong> 21.6% cross-referral rate<br><br>
-<strong>Key Insight:</strong> Dr Emma Lane shows exceptional patient loyalty with 94.7%
-of her follow-ups being patients returning specifically to her, indicating strong
-patient-practitioner relationships and satisfaction.
-</div>
-</div>
-</div>
-</div>
-<div id="discharges" class="tab-content">
 <div class="card">
-<h3 style="margin-bottom: 20px; color: #064e3b;">Detailed Discharge Analysis by
-Practitioner</h3>
+<h3 style="margin-bottom: 25px; color: #064e3b;">Practitioner Discharge Analysis</h3>
 <div style="overflow-x: auto;">
-<table class="table" id="dischargeTable">
-<thead>
-<tr>
-<th onclick="sortDischargeTable(0)" style="cursor: pointer;">Practitioner ↕</th>
-<th onclick="sortDischargeTable(1)" style="cursor: pointer;">Patient Request % of Appointments ↕</th>
-<th onclick="sortDischargeTable(2)" style="cursor: pointer;">Practitioner Request % of Appointments ↕</th>
-<th onclick="sortDischargeTable(3)" style="cursor: pointer;">Total Discharge % of Appointments ↕</th>
-</tr>
-</thead>
-<tbody>
-<tr style="background: #fef2f2;">
-<td><strong>Dr Sandhya Bibin</strong></td>
-<td data-value="3.9" style="color: #dc2626; font-weight: bold;">3.9%</td>
-<td data-value="3.2" style="color: #dc2626; font-weight: bold;">3.2%</td>
-<td data-value="7.2" style="color: #dc2626; font-weight: bold;">7.2%</td>
-</tr>
-<tr style="background: #fff7ed;">
-<td><strong>Dr Kushal Porwal</strong></td>
-<td data-value="5.6" style="color: #ea580c; font-weight: bold;">5.6%</td>
-<td data-value="4.0" style="color: #ea580c; font-weight: bold;">4.0%</td>
-<td data-value="9.5" style="color: #ea580c; font-weight: bold;">9.5%</td>
-</tr>
-<tr style="background: #fffbeb;">
-<td><strong>Dr Julius Ajayi</strong></td>
-<td data-value="3.2" style="color: #f59e0b; font-weight: bold;">3.2%</td>
-<td data-value="0.6" style="color: #f59e0b; font-weight: bold;">0.6%</td>
-<td data-value="3.9" style="color: #f59e0b; font-weight: bold;">3.9%</td>
-</tr>
-<tr class="performer-good">
-<td><strong>Dr Julia</strong></td>
-<td data-value="100.0">100.0%</td>
-<td data-value="0.0">0.0%</td>
-<td data-value="100.0">100.0%</td>
-</tr>
-<tr class="performer-good">
-<td><strong>Dr Jeremy</strong></td>
-<td data-value="100.0">100.0%</td>
-<td data-value="0.0">0.0%</td>
-<td data-value="100.0">100.0%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Aarons Gauntlet Rogers</strong></td>
-<td data-value="2.5">2.5%</td>
-<td data-value="1.3">1.3%</td>
-<td data-value="3.8">3.8%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Luke</strong></td>
-<td data-value="100.0">100.0%</td>
-<td data-value="0.0">0.0%</td>
-<td data-value="100.0">100.0%</td>
-</tr>
-<tr class="performer-excellent">
-<td><strong>Dr Emma Lane</strong></td>
-<td data-value="0.0" style="color: #059669; font-weight: bold;">0.0%</td>
-<td data-value="0.0" style="color: #059669; font-weight: bold;">0.0%</td>
-<td data-value="0.0" style="color: #059669; font-weight: bold;">0.0%</td>
-</tr>
-</tbody>
-</table>
+<div id="dashboardTableContainer">
+<div class="loading">Loading dashboard data...</div>
 </div>
 </div>
 <div class="insight-card">
-<div class="insight-title">🚨 Critical Discharge Analysis</div>
-<div class="insight-text">
-<strong>High-Risk Practitioners:</strong><br>
-• <strong>Dr Kushal Porwal:</strong> 9.5% total discharge rate (5.6% patient-initiated +
-4.0% practitioner-initiated)<br>
-• <strong>Dr Sandhya Bibin:</strong> 7.2% total discharge rate (3.9% patient-initiated +
-3.2% practitioner-initiated)<br><br>
-<strong>Best Practice Model:</strong><br>
-• <strong>Dr Emma Lane:</strong> 0.0% discharge rate with 98.4% completion - study and
-replicate her patient engagement methods<br><br>
-<strong>Immediate Actions Required:</strong><br>
-• Review Dr Kushal Porwal's patient communication and digital onboarding process<br>
-• Analyze Dr Sandhya Bibin's workload vs quality correlation (432 appointments may be
-overwhelming)<br>
-• Implement patient retention training program based on Dr Emma Lane's success model
+<div class="insight-title">🚨 Key Performance Insights</div>
+<div class="insight-text" id="keyInsights">
+Loading insights...
 </div>
 </div>
 </div>
-</div>
+
 </div>
 
 <script>
-function showTab(tabName, buttonElement) {
-// Hide all tab contents
-const tabContents = document.querySelectorAll('.tab-content');
-tabContents.forEach(content => {
-content.classList.remove('active');
+// Configuration - Your actual values
+const CONFIG = {
+    spreadsheetId: '1265tU_Frn4Skphu6sUlV-l4OicwhU9j8oqtNQKOQnB8', 
+    apiKey: 'AIzaSyDiJm2zhhdrCN6_Q0aNRvcRpefAzOMYgT4',
+    dataSheet: 'Sheet1' // Change this if your sheet has a different name
+};
+
+// Global data storage
+let dashboardData = [];
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
 });
-// Remove active class from all buttons
-const tabButtons = document.querySelectorAll('.tab-button');
-tabButtons.forEach(button => {
-button.classList.remove('active');
-});
-// Show selected tab content
-const targetTab = document.getElementById(tabName);
-if (targetTab) {
-targetTab.classList.add('active');
+
+async function loadAllData() {
+    loadDashboardData();
 }
-// Add active class to clicked button
-if (buttonElement) {
-buttonElement.classList.add('active');
+
+async function loadDashboardData() {
+    try {
+        // Skip first row (title) and get data starting from row 2
+        const range = `${CONFIG.dataSheet}!A2:H`; 
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${range}?key=${CONFIG.apiKey}`;
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.values || data.values.length < 1) {
+            throw new Error('No data found in spreadsheet');
+        }
+        
+        // Process data - mapping to your specific columns:
+        // Column A (0): Practitioner, Column D (3): Patient Requested %, 
+        // Column F (5): Practitioner Requested %, Column H (7): Total %
+        dashboardData = data.values
+            .filter(row => row[0] && row[0].trim() !== '' && row[0] !== 'Total') // Filter out empty rows and total row
+            .map(row => ({
+                name: row[0] ? row[0].trim() : '',           // Column A: Practitioner
+                patientRequested: row[3] || 'N/A',          // Column D: Patient Requested %
+                practitionerRequested: row[5] || 'N/A',     // Column F: Practitioner Requested % 
+                total: row[7] || 'N/A'                      // Column H: Total %
+            }));
+        
+        renderDashboardTable();
+        updateInsights();
+        updateSummaryStats();
+        updateLastUpdated();
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        document.getElementById('dashboardTableContainer').innerHTML = 
+            `<div class="error">Error loading data: ${error.message}</div>`;
+    }
 }
+
+function renderDashboardTable() {
+    const container = document.getElementById('dashboardTableContainer');
+    
+    let tableHTML = `
+        <table class="table" id="dashboardTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)" style="cursor: pointer;">Practitioner ↕</th>
+                    <th onclick="sortTable(1)" style="cursor: pointer;">Patient Requested % ↕</th>
+                    <th onclick="sortTable(2)" style="cursor: pointer;">Practitioner Requested % ↕</th>
+                    <th onclick="sortTable(3)" style="cursor: pointer;">Total % ↕</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    dashboardData.forEach(practitioner => {
+        const performanceClass = getTotalDischargeClass(practitioner.total);
+        
+        tableHTML += `
+            <tr class="${performanceClass}">
+                <td><strong>${practitioner.name}</strong></td>
+                <td style="color: ${getDischargeColor(practitioner.patientRequested)}; font-weight: bold;">
+                    ${practitioner.patientRequested}
+                </td>
+                <td style="color: ${getDischargeColor(practitioner.practitionerRequested)}; font-weight: bold;">
+                    ${practitioner.practitionerRequested}
+                </td>
+                <td style="color: ${getDischargeColor(practitioner.total)}; font-weight: bold;">
+                    ${practitioner.total}
+                </td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+    
+    container.innerHTML = tableHTML;
 }
+
+function updateInsights() {
+    if (dashboardData.length === 0) return;
+    
+    // Find practitioners with highest and lowest discharge rates
+    const validData = dashboardData.filter(p => p.total !== 'N/A' && !p.total.includes('N/A'));
+    
+    if (validData.length === 0) {
+        document.getElementById('keyInsights').innerHTML = 'No valid discharge data available for analysis.';
+        return;
+    }
+    
+    // Convert percentages to numbers for analysis
+    const practitionersWithNumbers = validData.map(p => ({
+        ...p,
+        totalNum: parseFloat(p.total.replace('%', '')),
+        patientNum: parseFloat(p.patientRequested.replace('%', '')) || 0
+    }));
+    
+    // Sort by total discharge rate
+    practitionersWithNumbers.sort((a, b) => b.totalNum - a.totalNum);
+    
+    const highest = practitionersWithNumbers[0];
+    const lowest = practitionersWithNumbers[practitionersWithNumbers.length - 1];
+    
+    // Find practitioners with high patient-initiated discharge rates
+    const highPatientRequested = practitionersWithNumbers
+        .filter(p => p.patientNum > 5)
+        .sort((a, b) => b.patientNum - a.patientNum);
+    
+    let insights = `
+        <strong>🔴 Highest Risk:</strong><br>
+        • <strong>${highest.name}:</strong> ${highest.total} total discharge rate<br><br>
+        
+        <strong>🟢 Best Performance:</strong><br>
+        • <strong>${lowest.name}:</strong> ${lowest.total} total discharge rate<br><br>
+    `;
+    
+    if (highPatientRequested.length > 0) {
+        insights += `
+            <strong>⚠️ High Patient-Initiated Discharges:</strong><br>
+        `;
+        highPatientRequested.slice(0, 3).forEach(p => {
+            insights += `• <strong>${p.name}:</strong> ${p.patientRequested} patient-requested<br>`;
+        });
+        insights += `<br><strong>Action Required:</strong> Review patient satisfaction and communication protocols for high-risk practitioners.`;
+    }
+    
+    document.getElementById('keyInsights').innerHTML = insights;
+}
+
+// Utility functions
+function getTotalDischargeClass(total) {
+    if (total === 'N/A') return 'performer-average';
+    const rate = parseFloat(total.replace('%', ''));
+    if (rate <= 4) return 'performer-excellent';
+    if (rate <= 10) return 'performer-good';
+    return 'performer-average';
+}
+
+function getDischargeColor(value) {
+    if (value === 'N/A' || value === null || value === undefined) return '#6b7280';
+    const rate = parseFloat(value.toString().replace('%', ''));
+    if (rate <= 2) return '#059669';
+    if (rate <= 7) return '#f59e0b';
+    return '#dc2626';
+}
+
+function updateSummaryStats() {
+    if (dashboardData.length === 0) return;
+    
+    const totalPractitioners = dashboardData.length;
+    const validData = dashboardData.filter(p => p.total !== 'N/A' && !p.total.includes('N/A'));
+    
+    if (validData.length > 0) {
+        const avgTotal = validData.reduce((sum, p) => sum + parseFloat(p.total.replace('%', '')), 0) / validData.length;
+        
+        document.getElementById('summaryStats').innerHTML = `
+            📊 ${totalPractitioners} Total Practitioners | ${avgTotal.toFixed(1)}% Avg Total Discharge Rate | ${validData.length} Active Practitioners
+        `;
+    } else {
+        document.getElementById('summaryStats').innerHTML = `
+            📊 ${totalPractitioners} Total Practitioners | Data Loading...
+        `;
+    }
+}
+
+function updateLastUpdated() {
+    const now = new Date();
+    const timeString = now.toLocaleString();
+    document.getElementById('lastUpdated').textContent = timeString;
+}
+
+function showError(message) {
+    document.getElementById('dashboardTableContainer').innerHTML = `<div class="error">${message}</div>`;
+}
+
+// Simplified sorting function
 function sortTable(columnIndex) {
-const table = document.getElementById('practitionerTable');
-const tbody = table.querySelector('tbody');
-const rows = Array.from(tbody.querySelectorAll('tr'));
-// Determine sort direction
-const isAscending = table.getAttribute('data-sort-direction') !== 'asc';
-table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');
-// Sort rows
-rows.sort((a, b) => {
-const cellA = a.cells[columnIndex];
-const cellB = b.cells[columnIndex];
-let valueA, valueB;
-// Check if cell has data-value attribute for numerical sorting
-if (cellA.hasAttribute('data-value')) {
-valueA = parseFloat(cellA.getAttribute('data-value'));
-valueB = parseFloat(cellB.getAttribute('data-value'));
-} else {
-// Get cell text content
-const textA = cellA.textContent.trim();
-const textB = cellB.textContent.trim();
-// Extract percentage values
-const percentMatchA = textA.match(/(\d+\.?\d*)%/);
-const percentMatchB = textB.match(/(\d+\.?\d*)%/);
-if (percentMatchA && percentMatchB) {
-valueA = parseFloat(percentMatchA[1]);
-valueB = parseFloat(percentMatchB[1]);
-} else {
-// Text sorting
-valueA = textA.toLowerCase();
-valueB = textB.toLowerCase();
-}
-}
-if (typeof valueA === 'number' && typeof valueB === 'number') {
-return isAscending ? valueA - valueB : valueB - valueA;
-} else {
-if (valueA < valueB) return isAscending ? -1 : 1;
-if (valueA > valueB) return isAscending ? 1 : -1;
-return 0;
-}
-});
-// Clear and repopulate tbody
-tbody.innerHTML = '';
-rows.forEach(row => tbody.appendChild(row));
-// Update header indicators
-const headers = table.querySelectorAll('th');
-headers.forEach((header, index) => {
-if (index === columnIndex) {
-const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-header.textContent = text + (isAscending ? ' ↑' : ' ↓');
-} else {
-const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-header.textContent = text + ' ↕';
-}
-});
-}
-function sortDischargeTable(columnIndex) {
-const table = document.getElementById('dischargeTable');
-const tbody = table.querySelector('tbody');
-const rows = Array.from(tbody.querySelectorAll('tr'));
-// Determine sort direction
-const isAscending = table.getAttribute('data-sort-direction') !== 'asc';
-table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');
-// Sort rows
-rows.sort((a, b) => {
-const cellA = a.cells[columnIndex];
-const cellB = b.cells[columnIndex];
-let valueA, valueB;
-// Check if cell has data-value attribute for numerical sorting
-if (cellA.hasAttribute('data-value')) {
-valueA = parseFloat(cellA.getAttribute('data-value'));
-valueB = parseFloat(cellB.getAttribute('data-value'));
-} else {
-// Get cell text content
-const textA = cellA.textContent.trim();
-const textB = cellB.textContent.trim();
-// Extract percentage values
-const percentMatchA = textA.match(/(\d+\.?\d*)%/);
-const percentMatchB = textB.match(/(\d+\.?\d*)%/);
-if (percentMatchA && percentMatchB) {
-valueA = parseFloat(percentMatchA[1]);
-valueB = parseFloat(percentMatchB[1]);
-} else {
-// Extract first number for numerical sorting
-const numMatchA = textA.match(/\d+/);
-const numMatchB = textB.match(/\d+/);
-if (numMatchA && numMatchB) {
-valueA = parseFloat(numMatchA[0]);
-valueB = parseFloat(numMatchB[0]);
-} else {
-// Text sorting
-valueA = textA.toLowerCase();
-valueB = textB.toLowerCase();
-}
-}
-}
-if (typeof valueA === 'number' && typeof valueB === 'number') {
-return isAscending ? valueA - valueB : valueB - valueA;
-} else {
-if (valueA < valueB) return isAscending ? -1 : 1;
-if (valueA > valueB) return isAscending ? 1 : -1;
-return 0;
-}
-});
-// Clear and repopulate tbody
-tbody.innerHTML = '';
-rows.forEach(row => tbody.appendChild(row));
-// Update header indicators
-const headers = table.querySelectorAll('th');
-headers.forEach((header, index) => {
-if (index === columnIndex) {
-const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-header.textContent = text + (isAscending ? ' ↑' : ' ↓');
-} else {
-const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-header.textContent = text + ' ↕';
-}
-});
+    const table = document.getElementById('dashboardTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Determine sort direction
+    const isAscending = table.getAttribute('data-sort-direction') !== 'asc';
+    table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');
+    
+    // Sort rows
+    rows.sort((a, b) => {
+        const cellA = a.cells[columnIndex].textContent.trim();
+        const cellB = b.cells[columnIndex].textContent.trim();
+        
+        let valueA, valueB;
+        
+        if (columnIndex === 0) {
+            // Name column - text sorting
+            valueA = cellA.toLowerCase();
+            valueB = cellB.toLowerCase();
+        } else {
+            // Percentage columns - handle N/A and extract numbers
+            if (cellA === 'N/A') valueA = -1;
+            else valueA = parseFloat(cellA.replace('%', ''));
+            
+            if (cellB === 'N/A') valueB = -1;
+            else valueB = parseFloat(cellB.replace('%', ''));
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return isAscending ? valueA - valueB : valueB - valueA;
+        } else {
+            if (valueA < valueB) return isAscending ? -1 : 1;
+            if (valueA > valueB) return isAscending ? 1 : -1;
+            return 0;
+        }
+    });
+    
+    // Clear and repopulate tbody
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    
+    // Update header indicators
+    const headers = table.querySelectorAll('th');
+    headers.forEach((header, index) => {
+        if (index === columnIndex) {
+            const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
+            header.textContent = text + (isAscending ? ' ↑' : ' ↓');
+        } else {
+            const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
+            header.textContent = text + ' ↕';
+        }
+    });
 }
 </script>
 </body>
