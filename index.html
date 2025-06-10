@@ -217,8 +217,8 @@ async function loadAllData() {
 
 async function loadDashboardData() {
     try {
-        // Skip first row (title) and get data starting from row 2
-        const range = `${CONFIG.dataSheet}!A2:H`; 
+        // Skip title row (row 1) AND header row (row 2), start from row 3
+        const range = `${CONFIG.dataSheet}!A3:H`; 
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${range}?key=${CONFIG.apiKey}`;
         
         const response = await fetch(url);
