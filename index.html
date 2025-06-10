@@ -1,12 +1,9 @@
-## 📁 **File 6: `index.html` (Complete)**
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greencare Practitioner Analytics</title>
+    <title>Greencare Practitioner Analytics - June 2025</title>
     <style>
         * {
             margin: 0;
@@ -48,6 +45,54 @@
             color: #059669;
             font-size: 1.1rem;
             font-weight: 500;
+        }
+
+        .data-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #10b981;
+        }
+
+        .data-info h3 {
+            color: #064e3b;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .data-source {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .source-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .source-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .source-details {
+            font-size: 0.9rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .date-highlight {
+            color: #059669;
+            font-weight: 600;
         }
 
         .summary-cards {
@@ -244,33 +289,35 @@
     <div class="container">
         <div class="header">
             <h1>Greencare Practitioner Analytics</h1>
-            <p class="subtitle">JamesGall12/Greencare-practitionersv2 | <span id="dataStatus">Loading...</span></p>
+            <p class="subtitle">June 2025 Analysis | <span id="dataStatus">Loading...</span></p>
         </div>
 
         <div class="controls">
             <button onclick="loadDashboardData()" class="refresh-btn">🔄 Refresh Data</button>
         </div>
 
+        <div id="dataInfoSection"></div>
+
         <div id="summarySection"></div>
         
         <div class="dashboard-section">
-            <h2 class="section-title">Practitioner Performance & Discharge Analytics</h2>
+            <h2 class="section-title">June 2025 Practitioner Performance & Discharge Analytics</h2>
             <div id="practitionersContainer">
-                <div class="loading">Loading practitioner data from Google Sheets...</div>
+                <div class="loading">Loading June 2025 practitioner data...</div>
             </div>
         </div>
 
         <div class="last-updated">
             Last updated: <span id="lastUpdated">Never</span> | 
-            Data source: "Dashboard Data" & "Discharge % Data" sheets | 
-            Auto-updates every 2 hours (9 AM - 5 PM AWST)
+            Auto-updates every 2 hours (9 AM - 5 PM AWST) | 
+            Repository: JamesGall12/Greencare-practitionersv2
         </div>
     </div>
 
     <script>
         // Configuration
         const CONFIG = {
-            dataUrl: './data/dashboard.json', // GitHub will update this file
+            dataUrl: './data/dashboard.json',
             retryAttempts: 3,
             retryDelay: 2000
         };
@@ -283,7 +330,7 @@
             statusElement.textContent = 'Updating...';
             
             try {
-                console.log('🔄 Loading dashboard data...');
+                console.log('🔄 Loading June 2025 dashboard data...');
                 
                 const data = await fetchWithRetry(CONFIG.dataUrl);
                 
@@ -291,12 +338,13 @@
                     throw new Error('Invalid data format received');
                 }
                 
+                renderDataInfo(data.juneAppointments);
                 renderSummary(data.summary);
                 renderPractitioners(data.practitioners);
                 updateTimestamp(data.lastUpdated);
                 
-                statusElement.textContent = `Live Data (${data.dateRange} days)`;
-                console.log('✅ Dashboard updated successfully');
+                statusElement.textContent = `June 2025 Data (${data.juneAppointments.total} appointments)`;
+                console.log('✅ June 2025 dashboard updated successfully');
                 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
@@ -308,7 +356,7 @@
         async function fetchWithRetry(url, attempts = CONFIG.retryAttempts) {
             for (let i = 0; i < attempts; i++) {
                 try {
-                    const response = await fetch(url + '?t=' + Date.now()); // Cache busting
+                    const response = await fetch(url + '?t=' + Date.now());
                     
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -326,6 +374,51 @@
             }
         }
 
+        function renderDataInfo(juneData) {
+            if (!juneData) return;
+            
+            const startDate = new Date(juneData.dateRange.startDate).toLocaleDateString('en-AU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const endDate = new Date(juneData.dateRange.endDate).toLocaleDateString('en-AU', {
+                year: 'numeric',
+                month: 'long',  
+                day: 'numeric'
+            });
+            
+            const dataInfoHtml = `
+                <div class="data-info">
+                    <h3>📊 June 2025 Data Sources & Coverage</h3>
+                    <div class="data-source">
+                        <div class="source-item">
+                            <div class="source-title">📅 June Appointment Data</div>
+                            <div class="source-details">
+                                <strong>Source:</strong> "Dashboard Data" sheet<br>
+                                <strong>Period:</strong> <span class="date-highlight">June 2025</span><br>
+                                <strong>Date Range:</strong> <span class="date-highlight">${startDate} - ${endDate}</span><br>
+                                <strong>Total Records:</strong> ${juneData.total} June appointments<br>
+                                <strong>Completed:</strong> ${juneData.completed} appointments
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <div class="source-title">💔 June Discharge Data</div>
+                            <div class="source-details">
+                                <strong>Source:</strong> "Discharge % Data" sheet<br>
+                                <strong>Period:</strong> <span class="date-highlight">June 2025</span><br>
+                                <strong>Calculation:</strong> Discharge Rate = June Discharges ÷ June Completed Appointments<br>
+                                <strong>Alignment:</strong> Both datasets cover the same June 2025 period
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dataInfoSection').innerHTML = dataInfoHtml;
+        }
+
         function renderSummary(summary) {
             if (!summary) return;
             
@@ -333,7 +426,7 @@
                 <div class="summary-cards">
                     <div class="summary-card">
                         <h3>${summary.totalAppointments || 0}</h3>
-                        <p>Total Appointments</p>
+                        <p>June Appointments</p>
                     </div>
                     <div class="summary-card">
                         <h3>${summary.totalCompletedAppointments || 0}</h3>
@@ -341,7 +434,7 @@
                     </div>
                     <div class="summary-card">
                         <h3>${summary.totalDischarges || 0}</h3>
-                        <p>Total Discharges</p>
+                        <p>June Discharges</p>
                     </div>
                     <div class="summary-card">
                         <h3>${summary.avgCompletionRate || 0}%</h3>
@@ -374,7 +467,7 @@
             const practitionersHtml = practitionerArray.map(practitioner => {
                 const performanceClass = getPerformanceClass(
                     parseFloat(practitioner.completionRate),
-                    parseFloat(practitioner.totalDischargePercent)  // Use total discharge rate
+                    parseFloat(practitioner.totalDischargePercent)
                 );
                 
                 return `
@@ -383,7 +476,7 @@
                         <div class="metrics-grid">
                             <div class="metric">
                                 <div class="metric-value">${practitioner.completedAppointments}</div>
-                                <div class="metric-label">Completed Appointments</div>
+                                <div class="metric-label">June Completed Appointments</div>
                             </div>
                             <div class="metric">
                                 <div class="metric-value">${practitioner.completionRate}%</div>
@@ -433,13 +526,9 @@
             const completion = parseFloat(completionRate);
             const discharge = parseFloat(dischargeRate);
             
-            // Excellent: High completion, low discharge
             if (completion >= 90 && discharge <= 5) return 'excellent';
-            // Good: Good completion, moderate discharge  
             if (completion >= 80 && discharge <= 10) return 'good';
-            // Warning: Decent completion or higher discharge
             if (completion >= 70 && discharge <= 20) return 'warning';
-            // Danger: Low completion or high discharge
             return 'danger';
         }
 
