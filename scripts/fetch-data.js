@@ -1,6 +1,6 @@
 // scripts/fetch-data.js
 // Customized for JamesGall12/Greencare-practitionersv2
-// Fetches data from Google Sheets and processes Greencare analytics
+// June 2025 Analysis - Matches discharge data period
 
 const { google } = require('googleapis');
 const fs = require('fs');
@@ -11,7 +11,7 @@ const CONFIG = {
   SPREADSHEET_ID: process.env.SPREADSHEET_ID || '1Hyg8J2vEjFZ2TuJsVnIiY16SBZ8euHhlBDDJwIxGdIY',
   API_KEY: process.env.GOOGLE_SHEETS_API_KEY,
   
-  // Your sheet names (corrected based on your clarification)
+  // Your sheet names
   APPOINTMENT_SHEET: 'Dashboard Data',      // Contains appointment data
   DISCHARGE_SHEET: 'Discharge % Data',      // Contains discharge statistics
   
@@ -21,8 +21,9 @@ const CONFIG = {
   DISCHARGE_FILE: 'discharges.json',
   DASHBOARD_FILE: 'dashboard.json',
   
-  // Date range for analysis
-  DATE_RANGE_DAYS: 30,
+  // June 2025 date range (matches discharge data)
+  ANALYSIS_MONTH: 6,      // June
+  ANALYSIS_YEAR: 2025,    // 2025
   
   // Your practitioners (with smart matching)
   PRACTITIONERS: [
@@ -39,8 +40,9 @@ const CONFIG = {
 
 async function main() {
   try {
-    console.log('🚀 Starting Greencare analytics update...');
+    console.log('🚀 Starting Greencare June 2025 analytics update...');
     console.log(`📊 Repository: JamesGall12/Greencare-practitionersv2`);
+    console.log(`📅 Analysis Period: June 2025 (matching discharge data)`);
     
     // Initialize Google Sheets API
     const sheets = google.sheets({ version: 'v4', auth: CONFIG.API_KEY });
@@ -58,17 +60,17 @@ async function main() {
     console.log('💔 Fetching discharge data from "Discharge % Data" sheet...');
     const dischargeData = await fetchSheetData(sheets, CONFIG.DISCHARGE_SHEET);
     
-    // Process comprehensive analytics
-    console.log('🔄 Processing comprehensive analytics...');
-    const dashboardData = processComprehensiveAnalytics(appointmentData, dischargeData);
+    // Process June 2025 analytics
+    console.log('🔄 Processing June 2025 analytics...');
+    const dashboardData = processJuneAnalytics(appointmentData, dischargeData);
     
     // Save all data files
     saveJsonFile(CONFIG.APPOINTMENT_FILE, appointmentData);
     saveJsonFile(CONFIG.DISCHARGE_FILE, dischargeData);
     saveJsonFile(CONFIG.DASHBOARD_FILE, dashboardData);
     
-    console.log('✅ Greencare analytics update complete!');
-    console.log(`📊 Processed ${appointmentData.length} appointments`);
+    console.log('✅ Greencare June 2025 analytics update complete!');
+    console.log(`📊 Processed ${dashboardData.juneAppointments.total} June appointments`);
     console.log(`💔 Processed ${dischargeData.length} discharge records`);
     console.log(`👨‍⚕️ Analytics for ${Object.keys(dashboardData.practitioners).length} practitioners`);
     
@@ -110,17 +112,17 @@ async function fetchSheetData(sheets, sheetName) {
   }
 }
 
-function processComprehensiveAnalytics(appointments, discharges) {
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - CONFIG.DATE_RANGE_DAYS);
-  
-  // Filter appointments by date range and valid data
-  const filteredAppointments = appointments.filter(apt => {
+function processJuneAnalytics(appointments, discharges) {
+  // Filter appointments to June 2025 only
+  const juneAppointments = appointments.filter(apt => {
+    if (!apt.APPOINTMENTDATE || !apt.APPOINTMENTWITH) return false;
+    
     const aptDate = new Date(apt.APPOINTMENTDATE);
-    return aptDate >= cutoffDate && 
-           apt.APPOINTMENTDATE && 
-           apt.APPOINTMENTWITH;
+    return aptDate.getMonth() === CONFIG.ANALYSIS_MONTH - 1 && // JavaScript months are 0-indexed
+           aptDate.getFullYear() === CONFIG.ANALYSIS_YEAR;
   });
+  
+  console.log(`📅 Filtered to ${juneAppointments.length} June 2025 appointments`);
   
   // Initialize practitioner stats
   const practitionerStats = {};
@@ -153,8 +155,8 @@ function processComprehensiveAnalytics(appointments, discharges) {
     };
   });
   
-  // Process appointment data
-  filteredAppointments.forEach(apt => {
+  // Process June appointment data
+  juneAppointments.forEach(apt => {
     const practitioner = findMatchingPractitioner(apt.APPOINTMENTWITH);
     if (!practitioner || !practitionerStats[practitioner]) return;
     
@@ -199,14 +201,14 @@ function processComprehensiveAnalytics(appointments, discharges) {
     }
   });
   
-  // Process discharge data from "Discharge % Data" sheet
+  // Process discharge data from "Discharge % Data" sheet (June data)
   discharges.forEach(discharge => {
     const practitioner = findMatchingPractitioner(discharge.Practitioner);
     if (!practitioner || !practitionerStats[practitioner]) return;
     
     const stats = practitionerStats[practitioner];
     
-    // Get discharge numbers from your sheet
+    // Get June discharge numbers from your sheet
     stats.patientRequestedDischarges = parseInt(discharge['Patient Request Discharges']) || 0;
     stats.practitionerRequestedDischarges = parseInt(discharge['Practitioner Request Discharges']) || 0;
     stats.totalDischarges = stats.patientRequestedDischarges + stats.practitionerRequestedDischarges;
@@ -241,9 +243,32 @@ function processComprehensiveAnalytics(appointments, discharges) {
   const avgCompletionRate = Object.values(practitionerStats).reduce((sum, stats) => sum + parseFloat(stats.completionRate), 0) / CONFIG.PRACTITIONERS.length;
   const avgDischargeRate = Object.values(practitionerStats).reduce((sum, stats) => sum + parseFloat(stats.totalDischargePercent), 0) / CONFIG.PRACTITIONERS.length;
   
+  // Calculate June date range from actual data
+  const juneDates = juneAppointments
+    .map(apt => new Date(apt.APPOINTMENTDATE))
+    .filter(date => !isNaN(date.getTime()))
+    .sort((a, b) => a - b);
+  
+  const juneRange = juneDates.length > 0 ? {
+    startDate: juneDates[0].toISOString().split('T')[0],
+    endDate: juneDates[juneDates.length - 1].toISOString().split('T')[0],
+    appointmentCount: juneDates.length,
+    month: 'June 2025'
+  } : {
+    startDate: '2025-06-01',
+    endDate: '2025-06-30',
+    appointmentCount: 0,
+    month: 'June 2025'
+  };
+  
   return {
     lastUpdated: new Date().toISOString(),
-    dateRange: CONFIG.DATE_RANGE_DAYS,
+    analysisMonth: 'June 2025',
+    juneAppointments: {
+      total: juneAppointments.length,
+      completed: totalCompletedAppointments,
+      dateRange: juneRange
+    },
     summary: {
       totalAppointments,
       totalCompletedAppointments,
