@@ -1,455 +1,481 @@
+## 📁 **File 6: `index.html` (Complete)**
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Greencare Practitioner Breakdown - Live Data</title>
-<style>
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-body {
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%);
-min-height: 100vh;
-padding: 20px;
-}
-.container {
-max-width: 1600px;
-margin: 0 auto;
-}
-.header {
-background: white;
-border-radius: 20px;
-padding: 40px;
-margin-bottom: 25px;
-text-align: center;
-box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-}
-.title {
-font-size: 3rem;
-color: #064e3b;
-margin-bottom: 10px;
-font-weight: 700;
-}
-.subtitle {
-color: #6b7280;
-font-size: 1.3rem;
-margin-bottom: 25px;
-}
-.performance-summary {
-display: inline-flex;
-align-items: center;
-gap: 20px;
-background: #ecfdf5;
-border: 2px solid #059669;
-border-radius: 15px;
-padding: 20px 30px;
-color: #064e3b;
-font-weight: 600;
-font-size: 1.2rem;
-}
-.nav {
-background: white;
-border-radius: 20px;
-padding: 25px;
-margin-bottom: 25px;
-text-align: center;
-box-shadow: 0 6px 25px rgba(0,0,0,0.1);
-}
-.tab-button {
-background: #f3f4f6;
-border: none;
-padding: 15px 35px;
-margin: 0 8px;
-border-radius: 12px;
-font-weight: 600;
-cursor: pointer;
-transition: all 0.3s ease;
-font-size: 1.1rem;
-}
-.tab-button:hover {
-background: #e5e7eb;
-transform: translateY(-3px);
-}
-.tab-button.active {
-background: #059669;
-color: white;
-box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
-}
-.card {
-background: white;
-border-radius: 20px;
-padding: 30px;
-margin-bottom: 25px;
-box-shadow: 0 6px 25px rgba(0,0,0,0.08);
-}
-.table {
-width: 100%;
-border-collapse: collapse;
-margin-top: 20px;
-}
-.table th,
-.table td {
-text-align: left;
-padding: 15px;
-border-bottom: 1px solid #e5e7eb;
-}
-.table th {
-background: #f8fafc;
-font-weight: 600;
-color: #374151;
-text-transform: uppercase;
-font-size: 0.85rem;
-letter-spacing: 0.5px;
-}
-.table tr:hover {
-background: #f9fafb;
-}
-.performer-excellent { background: #ecfdf5; }
-.performer-good { background: #fef3c7; }
-.performer-average { background: #fef2f2; }
-.tab-content {
-display: none;
-}
-.tab-content.active {
-display: block;
-}
-.insight-card {
-background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-border-radius: 15px;
-padding: 25px;
-border-left: 5px solid #059669;
-margin: 20px 0;
-}
-.insight-title {
-font-weight: 600;
-color: #064e3b;
-margin-bottom: 15px;
-font-size: 1.2rem;
-}
-.insight-text {
-color: #047857;
-line-height: 1.6;
-font-size: 1rem;
-}
-.loading {
-text-align: center;
-padding: 40px;
-color: #6b7280;
-}
-.error {
-background: #fef2f2;
-border: 1px solid #fca5a5;
-border-radius: 8px;
-padding: 15px;
-color: #dc2626;
-margin: 20px 0;
-}
-.refresh-btn {
-background: #059669;
-color: white;
-border: none;
-padding: 10px 20px;
-border-radius: 8px;
-cursor: pointer;
-margin: 10px;
-}
-.refresh-btn:hover {
-background: #047857;
-}
-@media (max-width: 768px) {
-.title {
-font-size: 2.5rem;
-}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greencare Practitioner Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #064e3b;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #059669;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            border-color: #10b981;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card h3 {
+            font-size: 2.2rem;
+            color: #064e3b;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .summary-card p {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .dashboard-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #064e3b;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .practitioners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .practitioner-card {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .practitioner-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-color);
+        }
+
+        .practitioner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: var(--card-color);
+        }
+
+        .practitioner-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #064e3b;
+            margin-bottom: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--metric-color);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .last-updated {
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            color: #dc2626;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Color coding for performance */
+        .excellent { --card-color: #10b981; --metric-color: #059669; }
+        .good { --card-color: #3b82f6; --metric-color: #2563eb; }
+        .warning { --card-color: #f59e0b; --metric-color: #d97706; }
+        .danger { --card-color: #ef4444; --metric-color: #dc2626; }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .practitioners-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<div class="header">
-<h1 class="title">Greencare Practitioner Breakdown</h1>
-<p class="subtitle">Live Performance Analysis | <span id="lastUpdated">Loading...</span></p>
-<div class="performance-summary" id="summaryStats">
-📊 Loading data...
-</div>
-<button class="refresh-btn" onclick="loadAllData()">🔄 Refresh Data</button>
-</div>
+    <div class="container">
+        <div class="header">
+            <h1>Greencare Practitioner Analytics</h1>
+            <p class="subtitle">JamesGall12/Greencare-practitionersv2 | <span id="dataStatus">Loading...</span></p>
+        </div>
 
-<div class="card">
-<h2 style="margin-bottom: 25px; color: #064e3b; text-align: center; font-size: 2rem; font-weight: bold;">Practitioner Discharge Analysis</h2>
-<div style="overflow-x: auto;">
-<div id="dashboardTableContainer">
-<div class="loading">Loading dashboard data...</div>
-</div>
-</div>
-<div class="insight-card">
-<div class="insight-title">🚨 Key Performance Insights</div>
-<div class="insight-text" id="keyInsights">
-Loading insights...
-</div>
-</div>
-</div>
+        <div class="controls">
+            <button onclick="loadDashboardData()" class="refresh-btn">🔄 Refresh Data</button>
+        </div>
 
-</div>
-
-<script>
-// Configuration - Your actual values
-const CONFIG = {
-    spreadsheetId: '1265tU_Frn4Skphu6sUlV-l4OicwhU9j8oqtNQKOQnB8', 
-    apiKey: 'AIzaSyDiJm2zhhdrCN6_Q0aNRvcRpefAzOMYgT4',
-    dataSheet: 'Sheet 1' // Updated to match your actual sheet name with space
-};
-
-// Global data storage
-let dashboardData = [];
-
-// Initialize dashboard when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadDashboardData();
-});
-
-async function loadAllData() {
-    loadDashboardData();
-}
-
-async function loadDashboardData() {
-    try {
-        // Skip title row (row 1) AND header row (row 2), start from row 3
-        const range = `${CONFIG.dataSheet}!A3:H`; 
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${range}?key=${CONFIG.apiKey}`;
+        <div id="summarySection"></div>
         
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (!data.values || data.values.length < 1) {
-            throw new Error('No data found in spreadsheet');
-        }
-        
-        // Process data - mapping to your specific columns:
-        // Column A (0): Practitioner, Column D (3): Patient Requested %, 
-        // Column F (5): Practitioner Requested %, Column H (7): Total %
-        dashboardData = data.values
-            .filter(row => row[0] && row[0].trim() !== '' && row[0] !== 'Total') // Filter out empty rows and total row
-            .map(row => ({
-                name: row[0] ? row[0].trim() : '',           // Column A: Practitioner
-                patientRequested: row[3] || 'N/A',          // Column D: Patient Requested %
-                practitionerRequested: row[5] || 'N/A',     // Column F: Practitioner Requested % 
-                total: row[7] || 'N/A'                      // Column H: Total %
-            }));
-        
-        renderDashboardTable();
-        updateInsights();
-        updateSummaryStats();
-        updateLastUpdated();
-        
-    } catch (error) {
-        console.error('Error loading dashboard data:', error);
-        document.getElementById('dashboardTableContainer').innerHTML = 
-            `<div class="error">Error loading data: ${error.message}</div>`;
-    }
-}
+        <div class="dashboard-section">
+            <h2 class="section-title">Practitioner Performance & Discharge Analytics</h2>
+            <div id="practitionersContainer">
+                <div class="loading">Loading practitioner data from Google Sheets...</div>
+            </div>
+        </div>
 
-function renderDashboardTable() {
-    const container = document.getElementById('dashboardTableContainer');
-    
-    let tableHTML = `
-        <table class="table" id="dashboardTable">
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)" style="cursor: pointer;">Practitioner ↕</th>
-                    <th onclick="sortTable(1)" style="cursor: pointer;">Patient Requested % ↕</th>
-                    <th onclick="sortTable(2)" style="cursor: pointer;">Practitioner Requested % ↕</th>
-                    <th onclick="sortTable(3)" style="cursor: pointer;">Total % ↕</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    dashboardData.forEach(practitioner => {
-        const performanceClass = getTotalDischargeClass(practitioner.total);
-        
-        tableHTML += `
-            <tr class="${performanceClass}">
-                <td><strong>${practitioner.name}</strong></td>
-                <td style="color: ${getDischargeColor(practitioner.patientRequested)}; font-weight: bold;">
-                    ${practitioner.patientRequested}
-                </td>
-                <td style="color: ${getDischargeColor(practitioner.practitionerRequested)}; font-weight: bold;">
-                    ${practitioner.practitionerRequested}
-                </td>
-                <td style="color: ${getDischargeColor(practitioner.total)}; font-weight: bold;">
-                    ${practitioner.total}
-                </td>
-            </tr>
-        `;
-    });
-    
-    tableHTML += `
-            </tbody>
-        </table>
-    `;
-    
-    container.innerHTML = tableHTML;
-}
+        <div class="last-updated">
+            Last updated: <span id="lastUpdated">Never</span> | 
+            Data source: "Dashboard Data" & "Discharge % Data" sheets | 
+            Auto-updates every 2 hours (9 AM - 5 PM AWST)
+        </div>
+    </div>
 
-function updateInsights() {
-    if (dashboardData.length === 0) return;
-    
-    // Find practitioners with highest and lowest discharge rates
-    const validData = dashboardData.filter(p => p.total !== 'N/A' && !p.total.includes('N/A'));
-    
-    if (validData.length === 0) {
-        document.getElementById('keyInsights').innerHTML = 'No valid discharge data available for analysis.';
-        return;
-    }
-    
-    // Convert percentages to numbers for analysis
-    const practitionersWithNumbers = validData.map(p => ({
-        ...p,
-        totalNum: parseFloat(p.total.replace('%', '')),
-        patientNum: parseFloat(p.patientRequested.replace('%', '')) || 0
-    }));
-    
-    // Sort by total discharge rate
-    practitionersWithNumbers.sort((a, b) => b.totalNum - a.totalNum);
-    
-    const highest = practitionersWithNumbers[0];
-    const lowest = practitionersWithNumbers[practitionersWithNumbers.length - 1];
-    
-    // Find practitioners with high patient-initiated discharge rates
-    const highPatientRequested = practitionersWithNumbers
-        .filter(p => p.patientNum > 5)
-        .sort((a, b) => b.patientNum - a.patientNum);
-    
-    let insights = `
-        <strong>🔴 Highest Risk:</strong><br>
-        • <strong>${highest.name}:</strong> ${highest.total} total discharge rate<br><br>
-        
-        <strong>🟢 Best Performance:</strong><br>
-        • <strong>${lowest.name}:</strong> ${lowest.total} total discharge rate<br><br>
-    `;
-    
-    if (highPatientRequested.length > 0) {
-        insights += `
-            <strong>⚠️ High Patient-Initiated Discharges:</strong><br>
-        `;
-        highPatientRequested.slice(0, 3).forEach(p => {
-            insights += `• <strong>${p.name}:</strong> ${p.patientRequested} patient-requested<br>`;
-        });
-        insights += `<br><strong>Action Required:</strong> Review patient satisfaction and communication protocols for high-risk practitioners.`;
-    }
-    
-    document.getElementById('keyInsights').innerHTML = insights;
-}
+    <script>
+        // Configuration
+        const CONFIG = {
+            dataUrl: './data/dashboard.json', // GitHub will update this file
+            retryAttempts: 3,
+            retryDelay: 2000
+        };
 
-// Utility functions
-function getTotalDischargeClass(total) {
-    if (total === 'N/A') return 'performer-average';
-    const rate = parseFloat(total.replace('%', ''));
-    if (rate <= 4) return 'performer-excellent';
-    if (rate <= 10) return 'performer-good';
-    return 'performer-average';
-}
+        // Load dashboard data on page load
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
 
-function getDischargeColor(value) {
-    if (value === 'N/A' || value === null || value === undefined) return '#6b7280';
-    const rate = parseFloat(value.toString().replace('%', ''));
-    if (rate <= 2) return '#059669';
-    if (rate <= 7) return '#f59e0b';
-    return '#dc2626';
-}
-
-function updateSummaryStats() {
-    if (dashboardData.length === 0) return;
-    
-    const totalPractitioners = dashboardData.length;
-    const validData = dashboardData.filter(p => p.total !== 'N/A' && !p.total.includes('N/A'));
-    
-    if (validData.length > 0) {
-        const avgTotal = validData.reduce((sum, p) => sum + parseFloat(p.total.replace('%', '')), 0) / validData.length;
-        
-        document.getElementById('summaryStats').innerHTML = `
-            📊 ${totalPractitioners} Total Practitioners | ${avgTotal.toFixed(1)}% Avg Total Discharge Rate | ${validData.length} Active Practitioners
-        `;
-    } else {
-        document.getElementById('summaryStats').innerHTML = `
-            📊 ${totalPractitioners} Total Practitioners | Data Loading...
-        `;
-    }
-}
-
-function updateLastUpdated() {
-    const now = new Date();
-    const timeString = now.toLocaleString();
-    document.getElementById('lastUpdated').textContent = timeString;
-}
-
-function showError(message) {
-    document.getElementById('dashboardTableContainer').innerHTML = `<div class="error">${message}</div>`;
-}
-
-// Simplified sorting function
-function sortTable(columnIndex) {
-    const table = document.getElementById('dashboardTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    // Determine sort direction
-    const isAscending = table.getAttribute('data-sort-direction') !== 'asc';
-    table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');
-    
-    // Sort rows
-    rows.sort((a, b) => {
-        const cellA = a.cells[columnIndex].textContent.trim();
-        const cellB = b.cells[columnIndex].textContent.trim();
-        
-        let valueA, valueB;
-        
-        if (columnIndex === 0) {
-            // Name column - text sorting
-            valueA = cellA.toLowerCase();
-            valueB = cellB.toLowerCase();
-        } else {
-            // Percentage columns - handle N/A and extract numbers
-            if (cellA === 'N/A') valueA = -1;
-            else valueA = parseFloat(cellA.replace('%', ''));
+        async function loadDashboardData() {
+            const statusElement = document.getElementById('dataStatus');
+            statusElement.textContent = 'Updating...';
             
-            if (cellB === 'N/A') valueB = -1;
-            else valueB = parseFloat(cellB.replace('%', ''));
+            try {
+                console.log('🔄 Loading dashboard data...');
+                
+                const data = await fetchWithRetry(CONFIG.dataUrl);
+                
+                if (!data || !data.practitioners) {
+                    throw new Error('Invalid data format received');
+                }
+                
+                renderSummary(data.summary);
+                renderPractitioners(data.practitioners);
+                updateTimestamp(data.lastUpdated);
+                
+                statusElement.textContent = `Live Data (${data.dateRange} days)`;
+                console.log('✅ Dashboard updated successfully');
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                showError(`Failed to load data: ${error.message}`);
+                statusElement.textContent = 'Data Load Failed';
+            }
         }
-        
-        if (typeof valueA === 'number' && typeof valueB === 'number') {
-            return isAscending ? valueA - valueB : valueB - valueA;
-        } else {
-            if (valueA < valueB) return isAscending ? -1 : 1;
-            if (valueA > valueB) return isAscending ? 1 : -1;
-            return 0;
+
+        async function fetchWithRetry(url, attempts = CONFIG.retryAttempts) {
+            for (let i = 0; i < attempts; i++) {
+                try {
+                    const response = await fetch(url + '?t=' + Date.now()); // Cache busting
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    return await response.json();
+                    
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} failed:`, error.message);
+                    
+                    if (i === attempts - 1) throw error;
+                    
+                    await new Promise(resolve => setTimeout(resolve, CONFIG.retryDelay));
+                }
+            }
         }
-    });
-    
-    // Clear and repopulate tbody
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
-    
-    // Update header indicators
-    const headers = table.querySelectorAll('th');
-    headers.forEach((header, index) => {
-        if (index === columnIndex) {
-            const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-            header.textContent = text + (isAscending ? ' ↑' : ' ↓');
-        } else {
-            const text = header.textContent.replace(' ↕', '').replace(' ↑', '').replace(' ↓', '');
-            header.textContent = text + ' ↕';
+
+        function renderSummary(summary) {
+            if (!summary) return;
+            
+            const summaryHtml = `
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>${summary.totalAppointments || 0}</h3>
+                        <p>Total Appointments</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>${summary.totalCompletedAppointments || 0}</h3>
+                        <p>Completed Appointments</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>${summary.totalDischarges || 0}</h3>
+                        <p>Total Discharges</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>${summary.avgCompletionRate || 0}%</h3>
+                        <p>Average Completion Rate</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>${summary.avgDischargeRate || 0}%</h3>
+                        <p>Average Discharge Rate</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>${summary.totalPractitioners || 0}</h3>
+                        <p>Active Practitioners</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('summarySection').innerHTML = summaryHtml;
         }
-    });
-}
-</script>
+
+        function renderPractitioners(practitioners) {
+            if (!practitioners) {
+                showError('No practitioner data available');
+                return;
+            }
+            
+            const practitionerArray = Object.values(practitioners)
+                .filter(p => p.totalAppointments > 0)
+                .sort((a, b) => parseFloat(b.completionRate) - parseFloat(a.completionRate));
+            
+            const practitionersHtml = practitionerArray.map(practitioner => {
+                const performanceClass = getPerformanceClass(
+                    parseFloat(practitioner.completionRate),
+                    parseFloat(practitioner.totalDischargePercent)  // Use total discharge rate
+                );
+                
+                return `
+                    <div class="practitioner-card ${performanceClass}">
+                        <div class="practitioner-name">${practitioner.name}</div>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.completedAppointments}</div>
+                                <div class="metric-label">Completed Appointments</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.completionRate}%</div>
+                                <div class="metric-label">Completion Rate</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.patientRequestedPercent}%</div>
+                                <div class="metric-label">Patient Requested Discharge %</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.practitionerRequestedPercent}%</div>
+                                <div class="metric-label">Practitioner Requested Discharge %</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.totalDischargePercent}%</div>
+                                <div class="metric-label">Total Discharge Rate</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.showRate}%</div>
+                                <div class="metric-label">Show Rate</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.initialAppointments}</div>
+                                <div class="metric-label">Initial Appointments</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.followupAppointments}</div>
+                                <div class="metric-label">Follow-up Appointments</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.onlineBookings}/${practitioner.salesBookings}</div>
+                                <div class="metric-label">Online/Sales Bookings</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${practitioner.uniquePatients}</div>
+                                <div class="metric-label">Unique Patients</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('practitionersContainer').innerHTML = practitionersHtml;
+        }
+
+        function getPerformanceClass(completionRate, dischargeRate) {
+            const completion = parseFloat(completionRate);
+            const discharge = parseFloat(dischargeRate);
+            
+            // Excellent: High completion, low discharge
+            if (completion >= 90 && discharge <= 5) return 'excellent';
+            // Good: Good completion, moderate discharge  
+            if (completion >= 80 && discharge <= 10) return 'good';
+            // Warning: Decent completion or higher discharge
+            if (completion >= 70 && discharge <= 20) return 'warning';
+            // Danger: Low completion or high discharge
+            return 'danger';
+        }
+
+        function updateTimestamp(lastUpdated) {
+            if (!lastUpdated) return;
+            
+            const date = new Date(lastUpdated);
+            const formattedDate = date.toLocaleString('en-AU', {
+                timeZone: 'Australia/Perth',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            document.getElementById('lastUpdated').textContent = formattedDate + ' AWST';
+        }
+
+        function showError(message) {
+            const errorHtml = `
+                <div class="error">
+                    <strong>⚠️ Error:</strong> ${message}
+                    <br><small>Data will refresh automatically every 2 hours during business hours</small>
+                </div>
+            `;
+            
+            document.getElementById('practitionersContainer').innerHTML = errorHtml;
+        }
+
+        // Auto-refresh every 10 minutes when page is active
+        setInterval(() => {
+            if (!document.hidden) {
+                loadDashboardData();
+            }
+        }, 10 * 60 * 1000);
+    </script>
 </body>
 </html>
