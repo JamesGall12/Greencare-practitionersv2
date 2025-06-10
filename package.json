@@ -1,0 +1,30 @@
+{
+  "name": "greencare-practitionersv2",
+  "version": "1.0.0",
+  "description": "Automated practitioner analytics dashboard for Greencare - JamesGall12/Greencare-practitionersv2",
+  "main": "scripts/fetch-data.js",
+  "scripts": {
+    "fetch-data": "node scripts/fetch-data.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JamesGall12/Greencare-practitionersv2.git"
+  },
+  "keywords": [
+    "healthcare",
+    "analytics",
+    "dashboard",
+    "greencare",
+    "practitioner-performance",
+    "discharge-analytics"
+  ],
+  "author": "Greencare Analytics Team",
+  "license": "MIT",
+  "dependencies": {
+    "googleapis": "^128.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
