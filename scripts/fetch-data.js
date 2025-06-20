@@ -244,22 +244,26 @@ function processJuneAnalytics(appointments, discharges) {
   const avgDischargeRate = Object.values(practitionerStats).reduce((sum, stats) => sum + parseFloat(stats.totalDischargePercent), 0) / CONFIG.PRACTITIONERS.length;
   
   // Calculate June date range from actual data
-  const juneDates = juneAppointments
-    .map(apt => new Date(apt.APPOINTMENTDATE))
-    .filter(date => !isNaN(date.getTime()))
-    .sort((a, b) => a - b);
-  
-  const juneRange = juneDates.length > 0 ? {
-    startDate: juneDates[0].toISOString().split('T')[0],
-    endDate: juneDates[juneDates.length - 1].toISOString().split('T')[0],
-    appointmentCount: juneDates.length,
-    month: 'June 2025'
-  } : {
-    startDate: '2025-06-01',
-    endDate: '2025-06-30',
-    appointmentCount: 0,
-    month: 'June 2025'
-  };
+const juneDates = juneAppointments
+  .map(apt => new Date(apt.APPOINTMENTDATE))
+  .filter(date =>
+    !isNaN(date.getTime()) &&
+    date.getMonth() === 5 &&  // June is month 5 (0-indexed)
+    date.getFullYear() === 2025
+  )
+  .sort((a, b) => a - b);
+
+const juneRange = juneDates.length > 0 ? {
+  startDate: '2025-06-01',
+  endDate: juneDates[juneDates.length - 1].toISOString().split('T')[0],
+  appointmentCount: juneDates.length,
+  month: 'June 2025 (up to ' + juneDates[juneDates.length - 1].toLocaleDateString('en-AU') + ')'
+} : {
+  startDate: '2025-06-01',
+  endDate: '2025-06-30',
+  appointmentCount: 0,
+  month: 'June 2025'
+};
   
   return {
     lastUpdated: new Date().toISOString(),
