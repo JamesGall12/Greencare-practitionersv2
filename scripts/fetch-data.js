@@ -2,7 +2,7 @@
 // Customized for JamesGall12/Greencare-practitionersv2
 // June 2025 Analysis – Dynamically updated with proper date parsing
 
-const { google } = require('googleapis');
+ const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 
@@ -15,7 +15,7 @@ const CONFIG = {
   APPOINTMENT_FILE: 'appointments.json',
   DISCHARGE_FILE: 'discharges.json',
   DASHBOARD_FILE: 'dashboard.json',
-  ANALYSIS_MONTH: 6, // June
+  ANALYSIS_MONTH: 6,
   ANALYSIS_YEAR: 2025,
   PRACTITIONERS: [
     'Jeremy Chou', 'Hollie Johnson', 'Dr Sandhya', 'Sandhya', 'Thomas', 'Julius',
@@ -77,7 +77,7 @@ async function fetchSheetData(sheets, sheetName) {
 
 function parseDate(raw) {
   if (!raw) return null;
-  const cleaned = raw.split(' ')[0]; // removes "00:00:00" or any time
+  const cleaned = raw.split(' ')[0];
   const parts = cleaned.split('/');
   if (parts.length === 3) {
     const [day, month, year] = parts;
@@ -85,6 +85,28 @@ function parseDate(raw) {
   }
   const fallback = new Date(raw);
   return isNaN(fallback.getTime()) ? null : fallback;
+}
+
+function normalize(str) {
+  return str.trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function findMatchingPractitioner(name) {
+  if (!name) return null;
+  const cleaned = normalize(name);
+
+  let match = CONFIG.PRACTITIONERS.find(p => normalize(p) === cleaned);
+  if (match) return match;
+
+  match = CONFIG.PRACTITIONERS.find(p =>
+    cleaned.includes(normalize(p)) || normalize(p).includes(cleaned)
+  );
+  if (match) return match;
+
+  const noTitle = cleaned.replace(/^(dr\.?|doctor)\s+/i, '');
+  return CONFIG.PRACTITIONERS.find(p =>
+    normalize(p).replace(/^(dr\.?|doctor)\s+/i, '') === noTitle
+  ) || null;
 }
 
 function processJuneAnalytics(appointments, discharges) {
@@ -228,25 +250,6 @@ function processJuneAnalytics(appointments, discharges) {
   };
 }
 
-function findMatchingPractitioner(name) {
-  if (!name) return null;
-  const cleaned = name.trim().replace(/\s+/g, ' ');
-  let match = CONFIG.PRACTITIONERS.find(p => p.toLowerCase() === cleaned.toLowerCase());
-  if (match) return match;
-
-  match = CONFIG.PRACTITIONERS.find(p =>
-    cleaned.toLowerCase().includes(p.toLowerCase()) ||
-    p.toLowerCase().includes(cleaned.toLowerCase())
-  );
-  if (match) return match;
-
-  const cleanedNoTitle = cleaned.replace(/^(dr\.?|doctor)\s+/i, '');
-  return CONFIG.PRACTITIONERS.find(p => {
-    const pNoTitle = p.replace(/^(dr\.?|doctor)\s+/i, '');
-    return cleanedNoTitle.toLowerCase() === pNoTitle.toLowerCase();
-  }) || null;
-}
-
 function saveJsonFile(filename, data) {
   const filepath = path.join(CONFIG.OUTPUT_DIR, filename);
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
@@ -256,3 +259,4 @@ function saveJsonFile(filename, data) {
 if (require.main === module) {
   main();
 }
+
