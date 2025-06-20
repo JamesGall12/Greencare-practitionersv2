@@ -1,37 +1,27 @@
 // scripts/fetch-data.js
 // Customized for JamesGall12/Greencare-practitionersv2
-// June 2025 Analysis – Dynamically updated to current June date
+// June 2025 Analysis – Dynamically updated with proper date parsing
 
 const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 
-// Configuration for your specific setup
 const CONFIG = {
   SPREADSHEET_ID: process.env.SPREADSHEET_ID || '1Hyg8J2vEjFZ2TuJsVnIiY16SBZ8euHhlBDDJwIxGdIY',
   API_KEY: process.env.GOOGLE_SHEETS_API_KEY,
-
-  // Your sheet names
   APPOINTMENT_SHEET: 'Dashboard Data',
   DISCHARGE_SHEET: 'Discharge % Data',
-
-  // Output paths
   OUTPUT_DIR: './data',
   APPOINTMENT_FILE: 'appointments.json',
   DISCHARGE_FILE: 'discharges.json',
   DASHBOARD_FILE: 'dashboard.json',
-
   ANALYSIS_MONTH: 6, // June
   ANALYSIS_YEAR: 2025,
-
-  // Your practitioners (with smart matching)
   PRACTITIONERS: [
     'Jeremy Chou', 'Hollie Johnson', 'Dr Sandhya', 'Sandhya', 'Thomas', 'Julius',
     'Dr. Kushal', 'Dr Kushal', 'Kushal', 'James', 'Emma', 'Ronnie', 'Luke', 'Laura',
     'Vanessa', 'Jordan', 'Julia'
   ],
-
-  // Status classifications
   COMPLETED_STATUSES: ['Completed', 'Attended', 'Finished', 'Complete'],
   DNA_STATUSES: ['DNA', 'Did Not Attend', 'No Show', 'NoShow'],
   CANCELLED_STATUSES: ['Cancelled', 'Canceled', 'Cancelled by Patient', 'Cancelled by Clinic']
@@ -46,22 +36,17 @@ async function main() {
       fs.mkdirSync(CONFIG.OUTPUT_DIR, { recursive: true });
     }
 
-    console.log('📅 Fetching appointment data...');
     const appointmentData = await fetchSheetData(sheets, CONFIG.APPOINTMENT_SHEET);
-
-    console.log('💔 Fetching discharge data...');
     const dischargeData = await fetchSheetData(sheets, CONFIG.DISCHARGE_SHEET);
-
-    console.log('🔄 Processing analytics...');
     const dashboardData = processJuneAnalytics(appointmentData, dischargeData);
 
     saveJsonFile(CONFIG.APPOINTMENT_FILE, appointmentData);
     saveJsonFile(CONFIG.DISCHARGE_FILE, dischargeData);
     saveJsonFile(CONFIG.DASHBOARD_FILE, dashboardData);
 
-    console.log('✅ Update complete!');
+    console.log('✅ Analytics update complete!');
   } catch (error) {
-    console.error('❌ Error updating analytics:', error.message);
+    console.error('❌ Error:', error.message);
     process.exit(1);
   }
 }
@@ -74,10 +59,7 @@ async function fetchSheetData(sheets, sheetName) {
     });
 
     const rows = response.data.values;
-    if (!rows || rows.length === 0) {
-      console.warn(`⚠️ No data found in: ${sheetName}`);
-      return [];
-    }
+    if (!rows || rows.length === 0) return [];
 
     const headers = rows[0];
     return rows.slice(1).map(row => {
@@ -88,23 +70,24 @@ async function fetchSheetData(sheets, sheetName) {
       return obj;
     });
   } catch (error) {
-    console.error(`❌ Error fetching sheet ${sheetName}:`, error.message);
+    console.error(`❌ Error fetching ${sheetName}:`, error.message);
     return [];
   }
 }
 
-function processJuneAnalytics(appointments, discharges) {
-  const parseDate = (raw) => {
-    if (!raw) return null;
-    const parts = raw.split('/');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return new Date(`${year}-${month}-${day}`);
-    }
-    const parsed = new Date(raw);
-    return isNaN(parsed.getTime()) ? null : parsed;
-  };
+function parseDate(raw) {
+  if (!raw) return null;
+  const cleaned = raw.split(' ')[0]; // removes "00:00:00" or any time
+  const parts = cleaned.split('/');
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+  }
+  const fallback = new Date(raw);
+  return isNaN(fallback.getTime()) ? null : fallback;
+}
 
+function processJuneAnalytics(appointments, discharges) {
   const juneAppointments = appointments.filter(apt => {
     const date = parseDate(apt.APPOINTMENTDATE);
     return (
@@ -194,11 +177,13 @@ function processJuneAnalytics(appointments, discharges) {
 
   Object.values(practitionerStats).forEach(stats => {
     stats.uniquePatients = stats.uniquePatients.size;
+
     if (stats.completedAppointments > 0) {
       stats.patientRequestedPercent = (stats.patientRequestedDischarges / stats.completedAppointments * 100).toFixed(2);
       stats.practitionerRequestedPercent = (stats.practitionerRequestedDischarges / stats.completedAppointments * 100).toFixed(2);
       stats.totalDischargePercent = (stats.totalDischarges / stats.completedAppointments * 100).toFixed(2);
     }
+
     if (stats.totalAppointments > 0) {
       const showAppointments = stats.completedAppointments + stats.dnaAppointments;
       stats.showRate = (showAppointments / stats.totalAppointments * 100).toFixed(2);
@@ -246,7 +231,6 @@ function processJuneAnalytics(appointments, discharges) {
 function findMatchingPractitioner(name) {
   if (!name) return null;
   const cleaned = name.trim().replace(/\s+/g, ' ');
-
   let match = CONFIG.PRACTITIONERS.find(p => p.toLowerCase() === cleaned.toLowerCase());
   if (match) return match;
 
